@@ -13,10 +13,13 @@ namespace PingPong
     {
         static void Main(string[] args)
         {
+            Console.SetWindowSize(70, 20);
+
             Bola bola = new Bola();
             Thread tb = new Thread(bola.movimentar);
             tb.Start();
             while (true) { }
         }
+
     }
 }

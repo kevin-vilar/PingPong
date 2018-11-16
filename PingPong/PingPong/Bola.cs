@@ -4,8 +4,8 @@ namespace PingPong
 {
     internal class Bola
     {
-        int x = 0;
-        int y = 0;
+        int x = 55;
+        int y = 15;
 
         int direcaoX = 1;
         int direcaoY = 1;
@@ -19,15 +19,14 @@ namespace PingPong
             tempo.Enabled = true;
             tempo.Elapsed += new ElapsedEventHandler(timer);
             desenhar(bola, x, y);
-
-            desenhar(bola, x, y);
+                        
         }
 
         private void timer(object sender, EventArgs e)
         {
             Console.CursorVisible = false;
             desenhar(' ', x, y);
-            x += 1 * direcaoX;
+            x += 2 * direcaoX;
             y += 1 * direcaoY;
             desenhar(bola, x, y);
             if (y >= Console.WindowHeight)
