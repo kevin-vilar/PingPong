@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Threading;
+using System.Timers;
+
 
 namespace PingPong
 {
@@ -10,8 +13,10 @@ namespace PingPong
     {
         static void Main(string[] args)
         {
-            Console.Write("oi");
-            Console.Read();
+            Bola bola = new Bola();
+            Thread tb = new Thread(bola.movimentar);
+            tb.Start();
+            while (true) { }
         }
     }
 }
