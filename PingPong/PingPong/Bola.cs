@@ -39,17 +39,17 @@ namespace PingPong
                 direcaoY *= -1;
             }
 
-            if (x >= Console.WindowWidth)
+            if (x >= Console.WindowWidth-1)
             {
                 direcaoX *= -1;
             }
 
-            if (x <= Console.WindowLeft)
+            if (x <= Console.WindowLeft+1)
             {
                 direcaoX *= -1;
             }
         }
-
+        
         public void desenhar(char desenho, int x = 0, int y = 0)
         {
             try
