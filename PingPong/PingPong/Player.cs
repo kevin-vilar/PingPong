@@ -31,11 +31,21 @@ namespace PingPong
             }
         }
 
-        public void movimentar(int n)
+        public void movimentar(String direcao)
         {
-            limparPlayer();
-            y += n;
-            renderizarPlayer();
+            if (direcao == "cima" && y > Console.WindowTop + 1)
+            {
+                limparPlayer();
+                y-=2;
+                renderizarPlayer();
+            }
+
+            if (direcao == "baixo" && y < Console.WindowHeight - 4)
+            {
+                limparPlayer();
+                y+=2;
+                renderizarPlayer();
+            }
         }
 
         public void desenhar(char desenho, int x = 0, int y = 0)

@@ -11,48 +11,50 @@ namespace PingPong
 {
     class Program
     {
+
         static void Main(string[] args)
         {
-            Console.SetWindowSize(70, 20);
-
-            Bola bola = new Bola();
-            Thread tb = new Thread(bola.movimentar);
-            tb.Start();
 
             Player player1 = new Player(5);
             Player player2 = new Player(60);
 
+            Console.WindowHeight = 20;
+            Console.WindowWidth = 70;
+            Console.BufferHeight = 20;
+            Console.BufferWidth = 70;
 
-            while (true)
+            Bola bola = new Bola();
+            Thread threadBola = new Thread(bola.movimentar);
+            //threadBola.Start();
+
+            Thread threadTeclado = new Thread(HandleTeclado);
+            threadTeclado.Start();
+            while (true) ;
+
+            void HandleTeclado()
             {
-                if (Console.ReadKey().Key == ConsoleKey.F2)
+                while (true)
                 {
-                    player1.movimentar(1);
-                }
+                    var key = Console.ReadKey(true).KeyChar;
+                    Thread.Sleep(10);
 
-                if (Console.ReadKey().Key == ConsoleKey.F1)
-                {
-                    if (player1.y > 0)
+                    switch (key)
                     {
-                        player1.movimentar(-1);
+                        case 'w':
+                            player1.movimentar("cima");
+                            break;
+                        case 's':
+                            player1.movimentar("baixo");
+                            break;
+                        case 'i':
+                            player2.movimentar("cima");
+                            break;
+                        case 'k': 
+                            player2.movimentar("baixo");
+                            break;
                     }
                 }
-
-                if (Console.ReadKey().Key == ConsoleKey.DownArrow)
-                {
-                    player2.movimentar(1);
-                }
-
-                if (Console.ReadKey().Key == ConsoleKey.UpArrow)
-                {
-                    if (player2.y > 0)
-                    {
-                        player2.movimentar(-1);
-                    }
-                }
-
             }
         }
-
     }
 }

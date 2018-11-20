@@ -10,7 +10,7 @@ namespace PingPong
         int direcaoX = 1;
         int direcaoY = 1;
 
-        private static System.Timers.Timer tempo = new System.Timers.Timer(50);
+        private static System.Timers.Timer tempo = new System.Timers.Timer(200);
 
         const char bola = 'O';
 
@@ -25,7 +25,9 @@ namespace PingPong
         private void timer(object sender, EventArgs e)
         {
             Console.CursorVisible = false;
-            desenhar(' ', x, y);
+            //desenhar(' ', x, y);
+
+            Console.Clear();
             x += 2 * direcaoX;
             y += 1 * direcaoY;
             desenhar(bola, x, y);
