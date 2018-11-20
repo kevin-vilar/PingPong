@@ -25,9 +25,8 @@ namespace PingPong
         private void timer(object sender, EventArgs e)
         {
             Console.CursorVisible = false;
-            //desenhar(' ', x, y);
-
-            Console.Clear();
+            desenhar(' ', x, y);
+                        
             x += 2 * direcaoX;
             y += 1 * direcaoY;
             desenhar(bola, x, y);

@@ -7,9 +7,16 @@ namespace PingPong
         public int x = 0;
         public int y = 0;
         
-        public Player(int x)
+        public Player(bool player2 = false)
         {
-            this.x = x;
+            if (!player2)
+            {
+                this.x = 5;
+            }
+            else
+            {
+                this.x = Console.WindowWidth - 5;
+            }
         }
 
         private void renderizarPlayer()
