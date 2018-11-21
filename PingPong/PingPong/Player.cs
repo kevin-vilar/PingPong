@@ -17,9 +17,11 @@ namespace PingPong
             {
                 this.x = Console.WindowWidth - 5;
             }
+
+            this.y = ((Console.WindowHeight / 2) - 2);
         }
 
-        private void renderizarPlayer()
+        public void renderizarPlayer()
         {
             for (int i = 0; i < 3; i++)
             {
@@ -58,7 +60,7 @@ namespace PingPong
             }
         }
 
-        public void desenhar(char desenho, int x = 0, int y = 0)
+        public void desenhar(char desenho = '|', int x = 0, int y = 0)
         {
             try
             {

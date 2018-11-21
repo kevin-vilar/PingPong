@@ -31,14 +31,35 @@ namespace PingPong
         public void run()
         {
             Thread threadTeclado = new Thread(HandleTeclado);
-            threadTeclado.Start();
-
             Thread threadBola = new Thread(bola.movimentar);
-            threadBola.Start(); 
-            while (true){}
+        
+            inicioJogo();
+
+            if (Console.ReadKey().Key == ConsoleKey.Enter)
+            {
+                Console.Clear();
+                renderizaObjetosInicio();
+                threadBola.Start();
+                threadTeclado.Start();
+            }
         }
 
-        void HandleTeclado()
+        private void inicioJogo()
+        {
+            Console.SetCursorPosition((Console.WindowWidth - 33) / 2, 1);
+            Console.Write("Aperte Enter para começar o jogo!");
+
+            renderizaObjetosInicio();
+        }
+
+        private void renderizaObjetosInicio()
+        {
+            player1.renderizarPlayer();
+            player2.renderizarPlayer();
+            bola.desenhar('O', bola.x, bola.y);
+        }
+
+        private void HandleTeclado()
         {
             while (true)
             {

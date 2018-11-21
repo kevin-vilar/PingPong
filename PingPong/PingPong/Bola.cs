@@ -7,8 +7,8 @@ namespace PingPong
         Player player1;
         Player player2;
 
-        int x = 55;
-        int y = 15;
+        public int x = Console.WindowWidth/2;
+        public int y = Console.WindowHeight/2;
 
         int direcaoX = 1;
         int direcaoY = 1;
@@ -65,7 +65,7 @@ namespace PingPong
             return false;
         }
         
-        public void desenhar(char desenho, int x = 0, int y = 0)
+        public void desenhar(char desenho = bola, int x = 0, int y = 0)
         {
             try
             {
