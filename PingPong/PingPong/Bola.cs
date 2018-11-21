@@ -4,6 +4,9 @@ namespace PingPong
 {
     internal class Bola
     {
+        Player player1;
+        Player player2;
+
         int x = 55;
         int y = 15;
 
@@ -13,6 +16,12 @@ namespace PingPong
         private static System.Timers.Timer tempo = new System.Timers.Timer(200);
 
         const char bola = 'O';
+
+        public Bola(Player player1, Player player2)
+        {
+            this.player1 = player1;
+            this.player2 = player2;
+        }
 
         public void movimentar()
         {
@@ -29,27 +38,31 @@ namespace PingPong
 
                 x += 2 * direcaoX;
                 y += 1 * direcaoY;
+
+                if ((y >= Console.WindowHeight - 1)|| (y <= Console.WindowTop + 1))
+                {
+                    direcaoY *= -1;
+                }
+
+                if ((x >= Console.WindowWidth - 1)|| (x <= Console.WindowLeft + 1)||colisaoPlayer())
+                {
+                    direcaoX *= -1;
+                }
                 desenhar(bola, x, y);
-                if (y >= Console.WindowHeight - 1)
-                {
-                    direcaoY *= -1;
-                }
-
-                if (y <= Console.WindowTop + 1)
-                {
-                    direcaoY *= -1;
-                }
-
-                if (x >= Console.WindowWidth - 1)
-                {
-                    direcaoX *= -1;
-                }
-
-                if (x <= Console.WindowLeft + 1)
-                {
-                    direcaoX *= -1;
-                }
             }
+        }
+
+        private bool colisaoPlayer()
+        {
+            bool colisaoP1 = (y >= player1.y && y <= (player1.y + 3)) && (x <= player1.x + 2);
+            bool colisaoP2 = (y >= player2.y && y <= (player2.y + 3)) && (x >= player2.x - 2);
+
+            if (colisaoP1||colisaoP2)
+            {
+                return true;
+            }
+
+            return false;
         }
         
         public void desenhar(char desenho, int x = 0, int y = 0)

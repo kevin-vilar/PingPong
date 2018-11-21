@@ -25,7 +25,7 @@ namespace PingPong
 
             player1 = new Player();
             player2 = new Player(true);
-            bola = new Bola();
+            bola = new Bola(player1,player2);
         }
 
         public void run()
