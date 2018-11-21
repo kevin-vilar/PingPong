@@ -40,18 +40,21 @@ namespace PingPong
 
         public void movimentar(String direcao)
         {
-            if (direcao == "cima" && y > Console.WindowTop + 1)
+            lock (Jogo._lock)
             {
-                limparPlayer();
-                y-=2;
-                renderizarPlayer();
-            }
+                if (direcao == "cima" && y > Console.WindowTop + 1)
+                {
+                    limparPlayer();
+                    y -= 2;
+                    renderizarPlayer();
+                }
 
-            if (direcao == "baixo" && y < Console.WindowHeight - 4)
-            {
-                limparPlayer();
-                y+=2;
-                renderizarPlayer();
+                if (direcao == "baixo" && y < Console.WindowHeight - 4)
+                {
+                    limparPlayer();
+                    y += 2;
+                    renderizarPlayer();
+                }
             }
         }
 

@@ -11,6 +11,9 @@ namespace PingPong
 
         private Player player1;
         private Player player2;
+        private Bola bola;
+
+        public static object _lock = new Object();
 
         public Jogo()
         {
@@ -22,6 +25,7 @@ namespace PingPong
 
             player1 = new Player();
             player2 = new Player(true);
+            bola = new Bola();
         }
 
         public void run()
@@ -29,6 +33,8 @@ namespace PingPong
             Thread threadTeclado = new Thread(HandleTeclado);
             threadTeclado.Start();
 
+            Thread threadBola = new Thread(bola.movimentar);
+            threadBola.Start(); 
             while (true){}
         }
 

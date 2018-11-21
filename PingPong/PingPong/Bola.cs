@@ -17,37 +17,38 @@ namespace PingPong
         public void movimentar()
         {
             tempo.Enabled = true;
-            tempo.Elapsed += new ElapsedEventHandler(timer);
-            desenhar(bola, x, y);
-                        
+            tempo.Elapsed += new ElapsedEventHandler(timer);                        
         }
 
         private void timer(object sender, EventArgs e)
         {
-            Console.CursorVisible = false;
-            desenhar(' ', x, y);
-                        
-            x += 2 * direcaoX;
-            y += 1 * direcaoY;
-            desenhar(bola, x, y);
-            if (y >= Console.WindowHeight)
+            lock (Jogo._lock)
             {
-                direcaoY *= -1;
-            }
+                Console.CursorVisible = false;
+                desenhar(' ', x, y);
 
-            if (y <= Console.WindowTop)
-            {
-                direcaoY *= -1;
-            }
+                x += 2 * direcaoX;
+                y += 1 * direcaoY;
+                desenhar(bola, x, y);
+                if (y >= Console.WindowHeight - 1)
+                {
+                    direcaoY *= -1;
+                }
 
-            if (x >= Console.WindowWidth-1)
-            {
-                direcaoX *= -1;
-            }
+                if (y <= Console.WindowTop + 1)
+                {
+                    direcaoY *= -1;
+                }
 
-            if (x <= Console.WindowLeft+1)
-            {
-                direcaoX *= -1;
+                if (x >= Console.WindowWidth - 1)
+                {
+                    direcaoX *= -1;
+                }
+
+                if (x <= Console.WindowLeft + 1)
+                {
+                    direcaoX *= -1;
+                }
             }
         }
         
