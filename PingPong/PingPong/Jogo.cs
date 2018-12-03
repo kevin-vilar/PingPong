@@ -14,10 +14,14 @@ namespace PingPong
         private Bola bola;
         private Placar placar;
 
+        public static bool jogoIniciado;
+
         public static object _lock = new Object();
 
         public Jogo()
         {
+            jogoIniciado = false;
+
             Console.CursorVisible = false;
             Console.WindowWidth = widthJanela;
             Console.WindowHeight = heightJanela;
@@ -32,20 +36,62 @@ namespace PingPong
 
         public void run()
         {
-            Thread threadTeclado = new Thread(HandleTeclado);
-            Thread threadBola = new Thread(bola.movimentar);
-            Thread threadPlacar = new Thread(placar.atualizarPlacar);
+            Thread threadVerificaTerminoPartida = new Thread(verificaTerminoPartida);
+            threadVerificaTerminoPartida.Start();
         
-            inicioJogo();
-
-            if (Console.ReadKey().Key == ConsoleKey.Enter)
+            while(true)
             {
                 Console.Clear();
-                renderizaObjetosInicio();
+                inicioJogo(); 
+                if (Console.ReadKey().Key == ConsoleKey.Enter)
+                {
+                    jogoIniciado = true;
 
-                threadPlacar.Start();
-                threadBola.Start();
-                threadTeclado.Start();
+                    Console.Clear();
+                    renderizaObjetosInicio();
+
+                    Thread threadTeclado = new Thread(HandleTeclado);
+                    Thread threadBola = new Thread(bola.movimentar);
+                    threadBola.Start();
+                    threadTeclado.Start();
+
+                    while(jogoIniciado)
+                    {
+                        if(placar.placar_player1 >= 2 || placar.placar_player2 >= 2)
+                        {
+                            jogoIniciado = false;
+                            threadTeclado.Abort();
+                            threadBola.Abort();
+                            Console.Clear();
+                            reiniciaPartida();
+                        }
+                    } 
+
+                }
+
+                
+            }
+        }
+        private void reiniciaPartida()
+        {
+            bola.x = Console.WindowWidth/2;
+            bola.y = Console.WindowHeight/2;
+
+            player1.x = 5;
+            player1.y = ((Console.WindowHeight / 2) - 2);
+
+            player2.x = Console.WindowWidth - 5;
+            player2.y = ((Console.WindowHeight / 2) - 2);
+
+            placar.placar_player1 = 0;
+            placar.placar_player2 = 0;
+        }
+
+        private void verificaTerminoPartida()
+        {
+            if(placar.placar_player1 >= 2 || placar.placar_player2 >= 2)
+            {
+                jogoIniciado = false;               
             }
         }
 

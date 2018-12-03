@@ -14,7 +14,7 @@ namespace PingPong
         int direcaoX = 1;
         int direcaoY = 1;
 
-        private static System.Timers.Timer tempo = new System.Timers.Timer(200);
+        private static System.Timers.Timer tempo;
 
         const char bola = 'O';
 
@@ -27,6 +27,7 @@ namespace PingPong
 
         public void movimentar()
         {
+            tempo = new System.Timers.Timer(200);
             tempo.Enabled = true;
             tempo.Elapsed += new ElapsedEventHandler(timer);                        
         }
@@ -35,36 +36,45 @@ namespace PingPong
         {
             lock (Jogo._lock)
             {
-                Console.CursorVisible = false;
-                desenhar(' ', x, y);
 
-                x += 2 * direcaoX;
-                y += 1 * direcaoY;
-
-                if ((y >= Console.WindowHeight - 1) || (y <= Console.WindowTop + 4))
+                if(Jogo.jogoIniciado)
                 {
-                    direcaoY *= -1;
-                }
+                    tempo.Start();
+                    Console.CursorVisible = false;
+                    desenhar(' ', x, y);
 
-                if (colisaoPlayer())
+                    x += 2 * direcaoX;
+                    y += 1 * direcaoY;
+
+                    if ((y >= Console.WindowHeight - 1) || (y <= Console.WindowTop + 4))
+                    {
+                        direcaoY *= -1;
+                    }
+
+                    if (colisaoPlayer())
+                    {
+                        direcaoX *= -1;
+                    }
+
+                    if((x >= Console.WindowWidth - 1))
+                    {
+                        placar.placar_player1 ++;
+                        direcaoX *= -1;
+                    }
+
+                    if((x <= Console.WindowLeft + 1))
+                    {
+                        placar.placar_player2 ++;
+                        direcaoX *= -1;
+                    }
+
+                    placar.atualizarPlacar();
+                    desenhar(bola, x, y);
+                }
+                else
                 {
-                    direcaoX *= -1;
+                    tempo.BeginInit();
                 }
-
-                if((x >= Console.WindowWidth - 1))
-                {
-                    placar.placar_player1 ++;
-                    direcaoX *= -1;
-                }
-
-                if((x <= Console.WindowLeft + 1))
-                {
-                    placar.placar_player2 ++;
-                    direcaoX *= -1;
-                }
-
-                placar.atualizarPlacar();
-                desenhar(bola, x, y);
             }
         }
 
