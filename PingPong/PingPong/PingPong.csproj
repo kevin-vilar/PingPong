@@ -45,6 +45,7 @@
   <ItemGroup>
     <Compile Include="Bola.cs" />
     <Compile Include="Jogo.cs" />
+    <Compile Include="Placar.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

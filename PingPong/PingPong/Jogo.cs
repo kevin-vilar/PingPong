@@ -12,6 +12,7 @@ namespace PingPong
         private Player player1;
         private Player player2;
         private Bola bola;
+        private Placar placar;
 
         public static object _lock = new Object();
 
@@ -23,15 +24,17 @@ namespace PingPong
             Console.BufferWidth = widthJanela;
             Console.BufferHeight = heightJanela;
 
+            placar = new Placar();
             player1 = new Player();
             player2 = new Player(true);
-            bola = new Bola(player1,player2);
+            bola = new Bola(player1,player2,placar);
         }
 
         public void run()
         {
             Thread threadTeclado = new Thread(HandleTeclado);
             Thread threadBola = new Thread(bola.movimentar);
+            Thread threadPlacar = new Thread(placar.atualizarPlacar);
         
             inicioJogo();
 
@@ -39,6 +42,8 @@ namespace PingPong
             {
                 Console.Clear();
                 renderizaObjetosInicio();
+
+                threadPlacar.Start();
                 threadBola.Start();
                 threadTeclado.Start();
             }
@@ -54,6 +59,7 @@ namespace PingPong
 
         private void renderizaObjetosInicio()
         {
+            placar.renderizarPlacar();
             player1.renderizarPlayer();
             player2.renderizarPlayer();
             bola.desenhar('O', bola.x, bola.y);
