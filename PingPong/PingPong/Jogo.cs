@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Threading;
 
 namespace PingPong
@@ -14,13 +16,15 @@ namespace PingPong
         private Bola bola;
         private Placar placar;
 
-        public static bool jogoIniciado;
+        public static bool partidaIniciada;
 
         public static object _lock = new Object();
 
+        string caminhoInfos = System.AppDomain.CurrentDomain.BaseDirectory.ToString() + "infos.txt";
+
         public Jogo()
         {
-            jogoIniciado = false;
+            partidaIniciada = false;
 
             Console.CursorVisible = false;
             Console.WindowWidth = widthJanela;
@@ -38,42 +42,48 @@ namespace PingPong
         {
             Thread threadVerificaTerminoPartida = new Thread(verificaTerminoPartida);
             threadVerificaTerminoPartida.Start();
-        
-            while(true)
+
+            while (true)
             {
                 Console.Clear();
-                inicioJogo(); 
+                salvarNomesPlayers();
+                Console.Clear();
+                
+                inicioJogo();
+
                 if (Console.ReadKey().Key == ConsoleKey.Enter)
                 {
-                    jogoIniciado = true;
+                    partidaIniciada = true;
 
                     Console.Clear();
                     renderizaObjetosInicio();
+                    renderizaNomePlayers();
 
                     Thread threadTeclado = new Thread(HandleTeclado);
                     Thread threadBola = new Thread(bola.movimentar);
                     threadBola.Start();
                     threadTeclado.Start();
 
-                    while(jogoIniciado)
+                    while(partidaIniciada)
                     {
-                        if(placar.placar_player1 >= 2 || placar.placar_player2 >= 2)
+                        if(placar.placar_player1 >= 1 || placar.placar_player2 >= 1)
                         {
-                            jogoIniciado = false;
+                            partidaIniciada = false;
                             threadTeclado.Abort();
                             threadBola.Abort();
-                            Console.Clear();
                             reiniciaPartida();
                         }
-                    } 
-
+                    }
                 }
-
-                
             }
         }
+
         private void reiniciaPartida()
         {
+            Console.Clear();
+
+            File.Delete(caminhoInfos);
+
             bola.x = Console.WindowWidth/2;
             bola.y = Console.WindowHeight/2;
 
@@ -91,7 +101,7 @@ namespace PingPong
         {
             if(placar.placar_player1 >= 2 || placar.placar_player2 >= 2)
             {
-                jogoIniciado = false;               
+                partidaIniciada = false;               
             }
         }
 
@@ -109,6 +119,57 @@ namespace PingPong
             player1.renderizarPlayer();
             player2.renderizarPlayer();
             bola.desenhar('O', bola.x, bola.y);
+        }
+
+        private void renderizaNomePlayers()
+        {
+            StreamReader infosR;
+            infosR = File.OpenText(caminhoInfos);
+            List<String> linha = new List<String>();
+            while (!infosR.EndOfStream)
+            {
+                linha.Add(infosR.ReadLine());
+            }
+
+            desenhar(2, 2, linha[0]);
+            desenhar(Console.WindowWidth - 10, 2, linha[1]);
+            infosR.Close();
+        }
+
+        private void salvarNomesPlayers()
+        {
+            StreamWriter infos;
+            infos = File.CreateText(caminhoInfos);
+
+            Console.Write("Digite o apelido do Player 1: ");
+            string infoP1 = Console.ReadLine();
+
+            Console.WriteLine();
+            Console.Write("Digite o apelido do Player 2: ");
+            string infoP2 = Console.ReadLine();
+
+            infos.WriteLine(infoP1);
+            infos.WriteLine(infoP2);
+
+            infos.Close();
+        }
+
+        private void desenhar(int x, int y, string desenho)
+        {
+            lock (Jogo._lock)
+            {
+                try
+                {
+                    if (x >= 0 && y >= 0)
+                    {
+                        Console.SetCursorPosition(x, y);
+                        Console.Write(desenho);
+                    }
+                }
+                catch (Exception)
+                {
+                }
+            }
         }
 
         private void HandleTeclado()

@@ -37,7 +37,7 @@ namespace PingPong
             lock (Jogo._lock)
             {
 
-                if(Jogo.jogoIniciado)
+                if(Jogo.partidaIniciada)
                 {
                     tempo.Start();
                     Console.CursorVisible = false;
