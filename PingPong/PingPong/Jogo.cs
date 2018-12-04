@@ -40,16 +40,17 @@ namespace PingPong
 
         public void run()
         {
-            Thread threadVerificaTerminoPartida = new Thread(verificaTerminoPartida);
-            threadVerificaTerminoPartida.Start();
 
             while (true)
             {
-                Console.Clear();
-                salvarNomesPlayers();
-                Console.Clear();
+                lock (Jogo._lock)
+                {
+                    Console.Clear();
+                    salvarNomesPlayers();
+                    Console.Clear();
                 
-                inicioJogo();
+                    inicioJogo();
+                }
 
                 if (Console.ReadKey().Key == ConsoleKey.Enter)
                 {
@@ -58,11 +59,11 @@ namespace PingPong
                     Console.Clear();
                     renderizaObjetosInicio();
                     renderizaNomePlayers();
-
+                    
                     Thread threadTeclado = new Thread(HandleTeclado);
+                    threadTeclado.Start();
                     Thread threadBola = new Thread(bola.movimentar);
                     threadBola.Start();
-                    threadTeclado.Start();
 
                     while(partidaIniciada)
                     {
