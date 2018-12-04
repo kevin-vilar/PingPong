@@ -71,6 +71,8 @@ namespace PingPong
                         Console.Clear();
                         renderizaObjetos();
                     
+                        Thread threadPlacar = new Thread(atualizarPlacar);
+                        threadPlacar.Start();
                         Thread threadTeclado = new Thread(HandleTeclado);
                         threadTeclado.Start();
                         Thread threadBola = new Thread(bola.movimentar);
@@ -83,6 +85,7 @@ namespace PingPong
                                 partidaIniciada = false;
                                 threadTeclado.Abort();
                                 threadBola.Abort();
+                                threadPlacar.Abort();
                                 incrementarPlacarRodada();
                                 reiniciaPartida();
                             }
@@ -98,6 +101,26 @@ namespace PingPong
                     desenhar(Console.WindowWidth / 2 - 18, Console.WindowHeight / 2, "Aperte qualquer tecla para reiniciar.");
                     Console.ReadKey();
                     reiniciarJogo();
+                }
+            }
+        }
+
+        private void atualizarPlacar()
+        {
+            while (true)
+            {
+                if ((bola.x >= player2.x))
+                {
+                    placar.placar_player1++;
+                    placar.atualizarPlacar();
+                    while ((bola.x >= player2.x)) { };
+                }
+
+                if ((bola.x <= player1.x))
+                {
+                    placar.placar_player2++;
+                    placar.atualizarPlacar();
+                    while ((bola.x <= player1.x)) { };
                 }
             }
         }

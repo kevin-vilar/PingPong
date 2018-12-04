@@ -51,24 +51,11 @@ namespace PingPong
                         direcaoY *= -1;
                     }
 
-                    if (colisaoPlayer())
+                    if (colisaoPlayer() || (x >= Console.WindowWidth - 1) || (x <= Console.WindowLeft + 1))
                     {
                         direcaoX *= -1;
                     }
 
-                    if((x >= Console.WindowWidth - 1))
-                    {
-                        placar.placar_player1 ++;
-                        direcaoX *= -1;
-                    }
-
-                    if((x <= Console.WindowLeft + 1))
-                    {
-                        placar.placar_player2 ++;
-                        direcaoX *= -1;
-                    }
-
-                    placar.atualizarPlacar();
                     desenhar(bola, x, y);
                 }
                 else
