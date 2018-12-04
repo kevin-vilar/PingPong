@@ -36,10 +36,11 @@ namespace PingPong
         {
             lock (Jogo._lock)
             {
-
+                
                 if(Jogo.partidaIniciada)
                 {
                     tempo.Start();
+
                     Console.CursorVisible = false;
                     desenhar(' ', x, y);
 
@@ -57,6 +58,10 @@ namespace PingPong
                     }
 
                     desenhar(bola, x, y);
+                    if (tempo.Interval > 50)
+                    {
+                        tempo.Interval -= 1;
+                    }
                 }
                 else
                 {
