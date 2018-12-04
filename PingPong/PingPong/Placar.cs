@@ -7,6 +7,9 @@ namespace PingPong
         public int placar_player1 = 0;
         public int placar_player2 = 0;
 
+        public int rodadasVencidas_player1 = 0;
+        public int rodadasVencidas_player2 = 0;
+
         private static int posicaoPlacar_x = (Console.WindowWidth / 2) - 6;
         private static int posicaoPlacar_y = 2;
         private static int posicaoP1_x = posicaoPlacar_x + 7;

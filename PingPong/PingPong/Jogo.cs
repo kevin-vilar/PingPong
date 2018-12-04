@@ -40,50 +40,103 @@ namespace PingPong
 
         public void run()
         {
-
             while (true)
             {
                 lock (Jogo._lock)
                 {
                     Console.Clear();
-                    salvarNomesPlayers();
+                    salvarInfosPartida();
                     Console.Clear();
                 
                     inicioJogo();
                 }
 
-                if (Console.ReadKey().Key == ConsoleKey.Enter)
+                List<String> infosPartida = obterInfosPartida();
+                int quantidadePontos = Convert.ToInt32(infosPartida[0]);
+                int quantidadeRodadas = Convert.ToInt32(infosPartida[1]);
+
+                int numeroRodada = 1;
+                while (numeroRodada <= quantidadeRodadas)
                 {
-                    partidaIniciada = true;
-
-                    Console.Clear();
-                    renderizaObjetosInicio();
-                    renderizaNomePlayers();
-                    
-                    Thread threadTeclado = new Thread(HandleTeclado);
-                    threadTeclado.Start();
-                    Thread threadBola = new Thread(bola.movimentar);
-                    threadBola.Start();
-
-                    while(partidaIniciada)
+                    lock (Jogo._lock)
                     {
-                        if(placar.placar_player1 >= 1 || placar.placar_player2 >= 1)
+                        Console.Clear();
+                        inicioJogo();
+                    }
+
+                    if (Console.ReadKey().Key == ConsoleKey.Enter)
+                    {
+                        partidaIniciada = true;
+
+                        Console.Clear();
+                        renderizaObjetos();
+                    
+                        Thread threadTeclado = new Thread(HandleTeclado);
+                        threadTeclado.Start();
+                        Thread threadBola = new Thread(bola.movimentar);
+                        threadBola.Start();
+
+                        while(partidaIniciada)
                         {
-                            partidaIniciada = false;
-                            threadTeclado.Abort();
-                            threadBola.Abort();
-                            reiniciaPartida();
+                            if(placar.placar_player1 >= quantidadePontos || placar.placar_player2 >= quantidadePontos)
+                            {
+                                partidaIniciada = false;
+                                threadTeclado.Abort();
+                                threadBola.Abort();
+                                incrementarPlacarRodada();
+                                reiniciaPartida();
+                            }
                         }
+                        
+                        numeroRodada++;
                     }
                 }
+                lock (Jogo._lock)
+                {
+                    Console.Clear();
+                    desenhar(Console.WindowWidth / 2 - 7, Console.WindowHeight / 2 - 2, playerVencedor() + " Venceu!");
+                    desenhar(Console.WindowWidth / 2 - 18, Console.WindowHeight / 2, "Aperte qualquer tecla para reiniciar.");
+                    Console.ReadKey();
+                    reiniciarJogo();
+                }
             }
+        }
+
+        private void incrementarPlacarRodada()
+        {
+            if (placar.placar_player1 > placar.placar_player2)
+            {
+                placar.rodadasVencidas_player1++;
+            }
+            else
+            {
+                placar.rodadasVencidas_player2++;
+            }
+        }
+
+        private string playerVencedor()
+        {
+            string playerVencedor;
+
+            if (placar.rodadasVencidas_player1 == placar.rodadasVencidas_player2)
+            {
+                return "Ninguém";
+            }
+
+            if (placar.rodadasVencidas_player1 > placar.rodadasVencidas_player2)
+            {
+                playerVencedor = player1.nome;
+            }
+            else
+            {
+                playerVencedor = player2.nome;
+            }
+            return playerVencedor;
         }
 
         private void reiniciaPartida()
         {
             Console.Clear();
-
-            File.Delete(caminhoInfos);
 
             bola.x = Console.WindowWidth/2;
             bola.y = Console.WindowHeight/2;
@@ -98,12 +151,12 @@ namespace PingPong
             placar.placar_player2 = 0;
         }
 
-        private void verificaTerminoPartida()
+        private void reiniciarJogo()
         {
-            if(placar.placar_player1 >= 2 || placar.placar_player2 >= 2)
-            {
-                partidaIniciada = false;               
-            }
+            placar = new Placar();
+            player1 = new Player();
+            player2 = new Player(true);
+            bola = new Bola(player1, player2, placar);
         }
 
         private void inicioJogo()
@@ -111,18 +164,19 @@ namespace PingPong
             Console.SetCursorPosition((Console.WindowWidth - 33) / 2, 1);
             Console.Write("Aperte Enter para começar o jogo!");
 
-            renderizaObjetosInicio();
+            renderizaObjetos();
         }
 
-        private void renderizaObjetosInicio()
+        private void renderizaObjetos()
         {
+            atribuirNomePlayers();
             placar.renderizarPlacar();
             player1.renderizarPlayer();
             player2.renderizarPlayer();
             bola.desenhar('O', bola.x, bola.y);
         }
 
-        private void renderizaNomePlayers()
+        private void atribuirNomePlayers()
         {
             StreamReader infosR;
             infosR = File.OpenText(caminhoInfos);
@@ -132,12 +186,30 @@ namespace PingPong
                 linha.Add(infosR.ReadLine());
             }
 
-            desenhar(2, 2, linha[0]);
-            desenhar(Console.WindowWidth - 10, 2, linha[1]);
+            player1.nome = linha[0];
+            player2.nome = linha[1];
+
             infosR.Close();
         }
 
-        private void salvarNomesPlayers()
+        private List<String> obterInfosPartida()
+        {
+            StreamReader infosR;
+            infosR = File.OpenText(caminhoInfos);
+            List<String> linha = new List<String>();
+            while (!infosR.EndOfStream)
+            {
+                linha.Add(infosR.ReadLine());
+            }
+            infosR.Close();
+
+            List<String> infosPartida = new List<String>();
+            infosPartida.Add(linha[2]);
+            infosPartida.Add(linha[3]);
+            return infosPartida;
+        }
+
+        private void salvarInfosPartida()
         {
             StreamWriter infos;
             infos = File.CreateText(caminhoInfos);
@@ -145,12 +217,19 @@ namespace PingPong
             Console.Write("Digite o apelido do Player 1: ");
             string infoP1 = Console.ReadLine();
 
-            Console.WriteLine();
             Console.Write("Digite o apelido do Player 2: ");
             string infoP2 = Console.ReadLine();
 
+            Console.Write("Digite a quantidade de pontos por rodada: ");
+            string numero_pontos = Console.ReadLine();
+
+            Console.Write("Digite a quantidade de rodadas: ");
+            string numero_rodadas = Console.ReadLine();
+
             infos.WriteLine(infoP1);
             infos.WriteLine(infoP2);
+            infos.WriteLine(numero_pontos);
+            infos.WriteLine(numero_rodadas);
 
             infos.Close();
         }
