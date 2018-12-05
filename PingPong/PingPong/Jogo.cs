@@ -21,6 +21,7 @@ namespace PingPong
         public static object _lock = new Object();
 
         string caminhoInfos = System.AppDomain.CurrentDomain.BaseDirectory.ToString() + "infos.txt";
+        string caminhoResultadosPartidas = System.AppDomain.CurrentDomain.BaseDirectory.ToString() + "resultadosPartidas.txt";
 
         public Jogo()
         {
@@ -91,12 +92,23 @@ namespace PingPong
                 }
                 lock (Jogo._lock)
                 {
+                    salvarResultadosPartida();
+                    File.Delete(caminhoInfos);
                     Console.Clear();
                     desenhar(Console.WindowWidth / 2 - 7, Console.WindowHeight / 2 - 2, playerVencedor() + " Venceu!");
                     desenhar(Console.WindowWidth / 2 - 18, Console.WindowHeight / 2, "Aperte qualquer tecla para reiniciar.");
                     Console.ReadKey();
                 }
             }
+        }
+
+        private void salvarResultadosPartida()
+        {
+            String resultadoPartida = "Resultado: " + player1.nome + " " + placar.rodadasVencidas_player1 + " x " + placar.rodadasVencidas_player2 + " " + player2.nome;
+
+            StreamWriter resultados = new StreamWriter(caminhoResultadosPartidas,true);
+            resultados.WriteLine(resultadoPartida);
+            resultados.Close();
         }
 
         private void atualizarPlacar()
