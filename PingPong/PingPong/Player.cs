@@ -7,11 +7,14 @@ namespace PingPong
         public int x = 0;
         public int y = 0;
         public string nome;
+        private string cor;
 
         private bool isPlayer2;
         
-        public Player(bool player2 = false)
+        public Player(string nome, string cor, bool player2 = false)
         {
+            this.nome = nome;
+            this.cor = cor;
             if (!player2)
             {
                 this.x = 5;
@@ -31,7 +34,17 @@ namespace PingPong
             for (int i = 0; i < 3; i++)
             {
                 Console.CursorVisible = false;
+                switch (cor)
+                {
+                case "azul":
+                        Console.ForegroundColor = ConsoleColor.Blue;
+                        break;
+                case "vermelho":
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        break;
+                }
                 desenhar("|", x, y+i);
+                Console.ResetColor();
             }
             if (isPlayer2)
             {

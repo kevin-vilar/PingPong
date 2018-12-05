@@ -31,11 +31,6 @@ namespace PingPong
             Console.WindowHeight = heightJanela;
             Console.BufferWidth = widthJanela;
             Console.BufferHeight = heightJanela;
-
-            placar = new Placar();
-            player1 = new Player();
-            player2 = new Player(true);
-            bola = new Bola(player1,player2,placar);
         }
 
         public void run()
@@ -48,12 +43,12 @@ namespace PingPong
                     salvarInfosPartida();
                     Console.Clear();
                 
-                    inicioJogo();
+                    inicioJogo(obterInfosPartida());
                 }
 
                 List<String> infosPartida = obterInfosPartida();
-                int quantidadePontos = Convert.ToInt32(infosPartida[0]);
-                int quantidadeRodadas = Convert.ToInt32(infosPartida[1]);
+                int quantidadePontos = Convert.ToInt32(infosPartida[4]);
+                int quantidadeRodadas = Convert.ToInt32(infosPartida[5]);
 
                 int numeroRodada = 1;
                 while (numeroRodada <= quantidadeRodadas)
@@ -61,7 +56,7 @@ namespace PingPong
                     lock (Jogo._lock)
                     {
                         Console.Clear();
-                        inicioJogo();
+                        inicioJogo(obterInfosPartida());
                     }
 
                     if (Console.ReadKey().Key == ConsoleKey.Enter)
@@ -100,7 +95,6 @@ namespace PingPong
                     desenhar(Console.WindowWidth / 2 - 7, Console.WindowHeight / 2 - 2, playerVencedor() + " Venceu!");
                     desenhar(Console.WindowWidth / 2 - 18, Console.WindowHeight / 2, "Aperte qualquer tecla para reiniciar.");
                     Console.ReadKey();
-                    reiniciarJogo();
                 }
             }
         }
@@ -174,45 +168,25 @@ namespace PingPong
             placar.placar_player2 = 0;
         }
 
-        private void reiniciarJogo()
-        {
-            placar = new Placar();
-            player1 = new Player();
-            player2 = new Player(true);
-            bola = new Bola(player1, player2, placar);
-        }
-
-        private void inicioJogo()
+        private void inicioJogo(List<String> infosPartida)
         {
             Console.SetCursorPosition((Console.WindowWidth - 33) / 2, 1);
             Console.Write("Aperte Enter para começar o jogo!");
+
+            placar = new Placar();
+            player1 = new Player(infosPartida[0],infosPartida[1]);
+            player2 = new Player(infosPartida[2], infosPartida[3],true);
+            bola = new Bola(player1, player2, placar);
 
             renderizaObjetos();
         }
 
         private void renderizaObjetos()
         {
-            atribuirNomePlayers();
             placar.renderizarPlacar();
             player1.renderizarPlayer();
             player2.renderizarPlayer();
-            bola.desenhar('O', bola.x, bola.y);
-        }
-
-        private void atribuirNomePlayers()
-        {
-            StreamReader infosR;
-            infosR = File.OpenText(caminhoInfos);
-            List<String> linha = new List<String>();
-            while (!infosR.EndOfStream)
-            {
-                linha.Add(infosR.ReadLine());
-            }
-
-            player1.nome = linha[0];
-            player2.nome = linha[1];
-
-            infosR.Close();
+            bola.desenhar(bola.x, bola.y);
         }
 
         private List<String> obterInfosPartida()
@@ -226,10 +200,7 @@ namespace PingPong
             }
             infosR.Close();
 
-            List<String> infosPartida = new List<String>();
-            infosPartida.Add(linha[2]);
-            infosPartida.Add(linha[3]);
-            return infosPartida;
+            return linha;
         }
 
         private void salvarInfosPartida()
@@ -238,10 +209,16 @@ namespace PingPong
             infos = File.CreateText(caminhoInfos);
 
             Console.Write("Digite o apelido do Player 1: ");
-            string infoP1 = Console.ReadLine();
+            string nomeP1 = Console.ReadLine();
+
+            Console.Write("Escolha uma cor(azul,vermelho ou branco): ");
+            string corPlayer1 = Console.ReadLine();
 
             Console.Write("Digite o apelido do Player 2: ");
-            string infoP2 = Console.ReadLine();
+            string nomeP2 = Console.ReadLine();
+
+            Console.Write("Escolha uma cor(azul,vermelho ou branco): ");
+            string corPlayer2 = Console.ReadLine();
 
             Console.Write("Digite a quantidade de pontos por rodada: ");
             string numero_pontos = Console.ReadLine();
@@ -249,8 +226,10 @@ namespace PingPong
             Console.Write("Digite a quantidade de rodadas: ");
             string numero_rodadas = Console.ReadLine();
 
-            infos.WriteLine(infoP1);
-            infos.WriteLine(infoP2);
+            infos.WriteLine(nomeP1);
+            infos.WriteLine(corPlayer1);
+            infos.WriteLine(nomeP2);
+            infos.WriteLine(corPlayer2);
             infos.WriteLine(numero_pontos);
             infos.WriteLine(numero_rodadas);
 

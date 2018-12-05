@@ -42,7 +42,7 @@ namespace PingPong
                     tempo.Start();
 
                     Console.CursorVisible = false;
-                    desenhar(' ', x, y);
+                    desenhar(x, y, ' ');
 
                     x += 2 * direcaoX;
                     y += 1 * direcaoY;
@@ -57,7 +57,7 @@ namespace PingPong
                         direcaoX *= -1;
                     }
 
-                    desenhar(bola, x, y);
+                    desenhar(x, y, bola);
                     if (tempo.Interval > 50)
                     {
                         tempo.Interval -= 1;
@@ -83,7 +83,7 @@ namespace PingPong
             return false;
         }
         
-        public void desenhar(char desenho = bola, int x = 0, int y = 0)
+        public void desenhar(int x = 0, int y = 0, char desenho = bola)
         {
             try
             {
